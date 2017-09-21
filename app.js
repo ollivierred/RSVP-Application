@@ -1,11 +1,40 @@
 const form = document.getElementById('registrar');  //Access and stores the form reference.
 const input = form.querySelector('input');  //Access and stores input element reference in form.
+const mainDiv = document.querySelector('div.main');
 const ul = document.getElementById('invitedList');  //Access and stores 'ul' reference.
+const div = document.createElement('div');
 
+
+const filterLabel = document.createElement('label');
+const filterCheckbox = document.createElement('input');
+filterCheckbox.type = 'checkbox';
+filterLabel.textContent = "Hide those who haven't responded";
+filterLabel.appendChild(filterCheckbox);
+div.appendChild(filterLabel);
+mainDiv.insertBefore(div, ul);
+
+filterCheckbox.addEventListener('change', (e) => {
+  const isChecked = e.target.checked;
+  const lis = ul.children;
+  if (isChecked) {
+    for (let i = 0; i < lis.length; i++) {
+      let li = lis[i];
+      if (li.className === 'responded') {
+        li.style.display = '';
+      } else {
+        li.style.display = 'none';
+      }
+    }
+  } else {
+    for (let i = 0; i < lis.length; i++) {
+      let li = lis[i];
+      li.style.display = '';
+    }
+  }
+})
 
 form.addEventListener('submit', (e) => {  //Adds an event listener to the form's submit event.
   e.preventDefault();  //Cancels the browser's default submit behavior.
-
   //Create list item to hold the name
   //append list item to the 'ul'
   const text = input.value;  //Stores the input value
