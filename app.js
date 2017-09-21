@@ -12,7 +12,8 @@ form.addEventListener('submit', (e) => {  //Adds an event listener to the form's
   input.value = null;  //Sets form input to an empty string
 
   const li = document.createElement('li');  //Create list item element
-  li.textContent = text;  //Puts input value into the list item.
+  const span = document.createElement('span');
+  span.textContent = text;
 
   const label = document.createElement('label');  //create label for checkbox element
   label.textContent = 'Confirmed';  //Adds the text of 'confirmed to the label attribute'
@@ -20,12 +21,17 @@ form.addEventListener('submit', (e) => {  //Adds an event listener to the form's
   const checkbox = document.createElement('input');  //create checkbox element.
   checkbox.type = 'checkbox';  //Set checkbox attribute type to 'checkbox'
 
-  const button = document.createElement('button')
-  button.textContent = 'Remove';
+  const editButton = document.createElement('button');
+  editButton.textContent = 'edit';
 
+  const removeButton = document.createElement('button');
+  removeButton.textContent = 'remove';
+
+  li.appendChild(span);
   label.appendChild(checkbox);  //Appends the checkbox to label
   li.appendChild(label);    //Appends the label to the 'li'
-  li.appendChild(button);
+  li.appendChild(editButton);
+  li.appendChild(removeButton);
   ul.appendChild(li);  //Adds the 'li' to the 'ul'
 });
 
@@ -40,10 +46,31 @@ ul.addEventListener('change', (e) => {  //Listens for checkbox whether checked o
   }
 });
 
-ul.addEventListener('click', (e) => {
-  if(e.target.tagName === 'BUTTON') {
-    const li = e.target.parentNode;
-    const ul = li.parentNode;
-    ul.removeChild(li);
+ul.addEventListener('click', (e) => {  //Handles the edit, save, and remove button behaviors
+  if(e.target.tagName === 'BUTTON') {  //If object clicked has tagName of 'BUTTON', if statement executes
+    const button = e.target;  //Saves object reference
+    const li = button.parentNode;  //Saves parent of the button -> li
+    const ul = li.parentNode;  //Saves parent of the li -> ul
+
+    if (button.textContent === 'remove') {
+      ul.removeChild(li);
+    } else if (button.textContent === 'edit') {
+      const span = li.firstElementChild;
+      const input = document.createElement('input');
+
+      input.type = 'text';
+      input.value = span.textContent;
+      li.insertBefore(input, span);
+      li.removeChild(span);
+      button.textContent = 'save';
+    } else if (button.textContent === 'save') {
+      const input = li.firstElementChild;
+      const span = document.createElement('span');
+
+      span.textContent = input.value;
+      li.insertBefore(span, input);
+      li.removeChild(input);
+      button.textContent = 'edit';
+    }
   }
-})
+});
