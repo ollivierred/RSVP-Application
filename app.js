@@ -35,35 +35,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   })
 
+  function createLi(text) {
+    function createElement(elementName, property, value) {
+      const element = document.createElement(elementName);
+      element[property] = value;
+      return element;
+    }
+
+    function appendToLi(elementName, property, value) {
+      const element = createElement(elementName, property, value);
+      li.appendChild(element);
+      return element;
+    }
+
+    const li = document.createElement('li');  //Create list item element
+    appendToLi('span', 'textContent', text);
+    //create label for checkbox element
+    //Appends the checkbox to label
+    appendToLi('label', 'textContent', 'confirmed')
+      .appendChild(createElement('input', 'type', 'checkbox'));
+    appendToLi('button', 'textContent', 'edit');
+    appendToLi('button', 'textContent', 'remove');
+    return li;
+  }
+
   form.addEventListener('submit', (e) => {  //Adds an event listener to the form's submit event.
     e.preventDefault();  //Cancels the browser's default submit behavior.
     //Create list item to hold the name
     //append list item to the 'ul'
     const text = input.value;  //Stores the input value
     input.value = null;  //Sets form input to an empty string
-
-    const li = document.createElement('li');  //Create list item element
-
-    const span = document.createElement('span');
-    span.textContent = text;
-
-    const label = document.createElement('label');  //create label for checkbox element
-    label.textContent = 'Confirmed';  //Adds the text of 'confirmed to the label attribute'
-
-    const checkbox = document.createElement('input');  //create checkbox element.
-    checkbox.type = 'checkbox';  //Set checkbox attribute type to 'checkbox'
-
-    const editButton = document.createElement('button');
-    editButton.textContent = 'edit';
-
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'remove';
-
-    li.appendChild(span);
-    label.appendChild(checkbox);  //Appends the checkbox to label
-    li.appendChild(label);    //Appends the label to the 'li'
-    li.appendChild(editButton);
-    li.appendChild(removeButton);
+    const li = createLi(text);
     ul.appendChild(li);  //Adds the 'li' to the 'ul'
   });
 
@@ -83,28 +85,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const button = e.target;  //Saves object reference
       const li = button.parentNode;  //Saves parent of the button -> li
       const ul = li.parentNode;  //Saves parent of the li -> ul
+      const action = button.textContent; //Captures the text content of button -> remove, edit, or save
 
-      if (button.textContent === 'remove') {
-        ul.removeChild(li);
-      } else if (button.textContent === 'edit') {
-        const span = li.firstElementChild;
-        const input = document.createElement('input');
-
-        input.type = 'text';
-        input.value = span.textContent;
-        li.insertBefore(input, span);
-        li.removeChild(span);
-        button.textContent = 'save';
-      } else if (button.textContent === 'save') {
-        const input = li.firstElementChild;
-        const span = document.createElement('span');
-
-        span.textContent = input.value;
-        li.insertBefore(span, input);
-        li.removeChild(input);
-        button.textContent = 'edit';
-      }
+      const nameActions = {
+        remove: () => {
+          ul.removeChild(li);
+        },
+        edit: () => {
+          const span = li.firstElementChild;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = span.textContent;
+          li.insertBefore(input, span);
+          li.removeChild(span);
+          button.textContent = 'save';
+        },
+        save: () => {
+          const input = li.firstElementChild;
+          const span = document.createElement('span');
+          span.textContent = input.value;
+          li.insertBefore(span, input);
+          li.removeChild(input);
+          button.textContent = 'edit';
+        }
+      };
+      //Selects and runs action based on button's name
+      nameActions[action]();
     }
   });
-
 });
