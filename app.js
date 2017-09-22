@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const ul = document.getElementById('invitedList');  //Access and stores 'ul' reference.
   const div = document.createElement('div');
 
-
   const filterLabel = document.createElement('label');
   const filterCheckbox = document.createElement('input');
   filterCheckbox.type = 'checkbox';
